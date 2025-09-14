@@ -36,3 +36,18 @@
           <button id="analyzeBtn" class="px-4 py-2 bg-black text-white rounded-xl playful-btn">Analyze</button>
           <input id="apiInput" class="border rounded-lg px-3 py-2 text-sm w-64" placeholder="http://127.0.0.1:8000" />
           <button id="setApi" class="px-3 py-2 border rounded-lg text-sm playful-btn">Set API</button>
+                  <p class="text-xs text-gray-500 mt-2">Tip: statements end with <code>;</code>. Supports <code>if/else</code>, <code>while</code>, <code>print()</code>, <code>// comments</code>.</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl shadow">
+  <h2 class="font-semibold mb-2 text-red-600 flex items-center gap-2"><span>🚨</span> Errors</h2>
+        <div id="errors" class="space-y-2 text-sm"></div>
+  <div id="loading" style="display:none;" class="mt-2"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <section class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white p-4 rounded-2xl shadow">
+  <h2 class="font-semibold mb-3 text-blue-600 flex items-center gap-2"><span>🔤</span> Tokens</h2>
+
+
