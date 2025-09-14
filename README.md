@@ -2,7 +2,7 @@
 
 TinyLang_Analyser is a lightweight lexical analysis tool built to process programs written in the simplified programming language TinyLang. It serves as the first phase of compilation, scanning source code and converting it into a sequence of tokens that can be further used for syntax and semantic analysis.
 
-##✨ Features
+✨ ##Features
 
 Supports tokenization for:
 
