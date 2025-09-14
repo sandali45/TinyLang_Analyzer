@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TinyLang Web Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-6xl mx-auto p-6 space-y-6" style="background: linear-gradient(120deg,#37353E 0%,#2e3189 100%); min-height:100vh;">
+    <header class="flex items-center justify-between">
+      <div class="w-full flex flex-col items-center justify-center py-6">
+        <div class="text-4xl font-extrabold rainbow" style="background: linear-gradient(90deg,#78B9B5 0%,#5c90b4 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-fill-color: transparent; letter-spacing:2px;">Lexical, Syntax & Semantic Analyzer</div>
+        <div class="mt-2 flex gap-2 text-lg">
+          <span class="text-red-400 animate-bounce">🧩</span>
+          <span class="text-yellow-400 animate-pulse">🧠</span>
+          <span class="text-pink-400 animate-bounce">✨</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="apiUrl" class="text-sm text-gray-500">API: http://127.0.0.1:8000</span>
+        <button id="darkToggle" class="dark-toggle">🌙 Dark Mode</button>
+      </div>
+    </header>
+
+    <section class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white p-4 rounded-2xl shadow">
+  <label class="block text-sm font-semibold mb-2 text-blue-600 flex items-center gap-2"><span>📝</span> Source Code</label>
+        <textarea id="source" class="w-full h-64 p-3 border rounded-xl font-mono text-sm"
+          placeholder="Type your source code here..."
+          style="background: linear-gradient(90deg,#ffe0e0 0%,#fff1e0 100%); border:2px solid #ff5858; color:#222;"></textarea>
+        <div class="mt-4 flex items-center gap-3">
+          <button id="analyzeBtn" class="px-4 py-2 bg-black text-white rounded-xl playful-btn">Analyze</button>
+          <input id="apiInput" class="border rounded-lg px-3 py-2 text-sm w-64" placeholder="http://127.0.0.1:8000" />
+          <button id="setApi" class="px-3 py-2 border rounded-lg text-sm playful-btn">Set API</button>
