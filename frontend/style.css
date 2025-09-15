@@ -1,0 +1,93 @@
+/* Body */
+body { 
+    font-family: 'Quicksand', sans-serif; 
+    transition: background 0.3s, color 0.3s; 
+    background: #43436b;
+    color: #0b0b98;
+}
+
+/* Buttons */
+.playful-btn {
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background: #12222e;
+    color: #fff;
+}
+.playful-btn:hover {
+    transform: scale(1.05) rotate(-1deg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    background: linear-gradient(90deg,#74b9ff 0%,#55efc4 100%);
+}
+
+/* Spinner */
+.spinner {
+    border: 4px solid #e0e0e0;
+    border-top: 4px solid #74b9ff;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+/* style.css */
+
+/* Body */
+body { 
+    font-family: 'Quicksand', sans-serif; 
+    transition: background 0.3s, color 0.3s; 
+    background: #43436b;
+    color: #0b0b98;
+}
+
+/* Buttons */
+.playful-btn {
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background: #12222e;
+    color: #fff;
+}
+.playful-btn:hover {
+    transform: scale(1.05) rotate(-1deg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    background: linear-gradient(90deg,#74b9ff 0%,#55efc4 100%);
+}
+
+/* Spinner */
+.spinner {
+    border: 4px solid #e0e0e0;
+    border-top: 4px solid #74b9ff;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Dark mode */
+.dark-mode { background: #1e1e2f !important; color: #f3f3f3 !important; }
+.dark-mode .bg-white { background: #2a2a3f !important; color: #f3f3f3 !important; }
+.dark-mode .text-gray-500 { color: #b3b3b3 !important; }
+.dark-mode .border { border-color: #444 !important; }
+.dark-mode textarea#source { background: #2a2a3f !important; color: #f3f3f3 !important; border: 2px solid #74b9ff !important; }
+
+/* Dark toggle */
+.dark-toggle {
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: linear-gradient(90deg,#74b9ff 0%,#81ecec 100%);
+    color: #222;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-left: 1rem;
+    transition: background 0.2s;
+}
+.dark-toggle:hover {
+    background: linear-gradient(90deg,#23232a 0%,#18181b 100%);
+    color: #f3f3f3;
+}
+
