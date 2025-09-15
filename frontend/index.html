@@ -49,5 +49,46 @@
     <section class="grid md:grid-cols-2 gap-6">
       <div class="bg-white p-4 rounded-2xl shadow">
   <h2 class="font-semibold mb-3 text-blue-600 flex items-center gap-2"><span>🔤</span> Tokens</h2>
+  <div class="overflow-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left border-b">
+                <th class="py-2 pr-4">Type</th>
+                <th class="py-2 pr-4">Value</th>
+                <th class="py-2 pr-4">Line</th>
+                <th class="py-2 pr-4">Col</th>
+              </tr>
+            </thead>
+            <tbody id="tokenTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl shadow">
+  <h2 class="font-semibold mb-3 text-purple-600 flex items-center gap-2"><span>🌳</span> Parse Tree</h2>
+        <div id="svgWrap" class="border rounded-xl p-2 overflow-auto bg-gray-50" style="min-height: 200px;"></div>
+       <button id="exportBtn"
+    class="mt-4 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-400 
+           text-white font-semibold rounded-2xl shadow-xl hover:scale-105 
+           hover:shadow-2xl transition transform duration-300 flex items-center gap-2">
+    <span></span>
+    Export as PNG
+</button>
+
+      </div>
+    </section>
+
+    <footer class="text-xs text-gray-500 text-center">
+      <div class="flex items-center justify-center gap-2">
+        <span class="text-red-400">❤️</span>
+        <span class="text-orange-300">🧡</span>
+        <span class="font-bold">Built by Sandalee and Oneli</span>
+      </div>
+    </footer>
+  </div>
+
+
+
+
 
 
