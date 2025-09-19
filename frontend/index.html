@@ -110,6 +110,13 @@
     darkToggle.onclick = () => {
       document.body.classList.toggle('dark-mode');
     };
+    
+function showErrors(list) {
+      errorsEl.innerHTML = '';
+      if (!list || list.length === 0) {
+        errorsEl.innerHTML = '<div class="text-green-700 font-bold flex items-center gap-2"><span>✅</span> No errors! 🎉</div>';
+        return;
+      }
 
 
   </script>
