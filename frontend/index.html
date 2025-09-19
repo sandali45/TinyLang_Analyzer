@@ -102,6 +102,12 @@
     let API = 'http://127.0.0.1:8000';
     apiInput.value = API;
 
+    setApiBtn.onclick = () => {
+      API = apiInput.value.trim() || API;
+      apiLabel.textContent = 'API: ' + API;
+    };
+
+
   </script>
 
 
