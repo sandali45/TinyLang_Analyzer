@@ -127,6 +127,22 @@ function showErrors(list) {
         errorsEl.appendChild(chip);
       }
     }
+function showTokens(tokens) {
+      tokenTable.innerHTML = '';
+      (tokens || []).forEach(t => {
+        const tr = document.createElement('tr');
+        tr.style.transition = 'background 0.3s';
+        tr.onmouseover = () => tr.style.background = 'linear-gradient(90deg,#ffecd2 0%,#fcb69f 100%)';
+        tr.onmouseout = () => tr.style.background = '';
+        tr.innerHTML = `
+          <td class="py-1 pr-4 font-bold">${t.type}</td>
+          <td class="py-1 pr-4 font-mono">${t.value}</td>
+          <td class="py-1 pr-4">${t.line ?? ''}</td>
+          <td class="py-1 pr-4">${t.column ?? ''}</td>
+        `;
+        tokenTable.appendChild(tr);
+      });
+    }
 
 
   </script>
