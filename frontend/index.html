@@ -117,6 +117,16 @@ function showErrors(list) {
         errorsEl.innerHTML = '<div class="text-green-700 font-bold flex items-center gap-2"><span>✅</span> No errors! 🎉</div>';
         return;
       }
+      for (const e of list) {
+        const chip = document.createElement('div');
+        chip.className = 'px-3 py-2 border rounded-lg font-bold flex items-center gap-2';
+        chip.style.background = e.kind === 'syntax' ? 'linear-gradient(90deg,#fcb69f 0%,#ffecd2 100%)' : 'linear-gradient(90deg,#a1c4fd 0%,#c2e9fb 100%)';
+        chip.style.color = '#222';
+        chip.innerHTML = `<span>${e.kind === 'syntax' ? '🛑' : '⚠️'}</span> <b>${e.kind.toUpperCase()}</b>: ${e.message}
+                          ${e.line ? `(line ${e.line}, col ${e.column})` : ''}`;
+        errorsEl.appendChild(chip);
+      }
+    }
 
 
   </script>
