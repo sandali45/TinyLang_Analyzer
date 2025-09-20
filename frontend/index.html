@@ -110,6 +110,45 @@
     darkToggle.onclick = () => {
       document.body.classList.toggle('dark-mode');
     };
+    
+function showErrors(list) {
+      errorsEl.innerHTML = '';
+      if (!list || list.length === 0) {
+        errorsEl.innerHTML = '<div class="text-green-700 font-bold flex items-center gap-2"><span>✅</span> No errors! 🎉</div>';
+        return;
+      }
+      for (const e of list) {
+        const chip = document.createElement('div');
+        chip.className = 'px-3 py-2 border rounded-lg font-bold flex items-center gap-2';
+        chip.style.background = e.kind === 'syntax' ? 'linear-gradient(90deg,#fcb69f 0%,#ffecd2 100%)' : 'linear-gradient(90deg,#a1c4fd 0%,#c2e9fb 100%)';
+        chip.style.color = '#222';
+        chip.innerHTML = `<span>${e.kind === 'syntax' ? '🛑' : '⚠️'}</span> <b>${e.kind.toUpperCase()}</b>: ${e.message}
+                          ${e.line ? `(line ${e.line}, col ${e.column})` : ''}`;
+        errorsEl.appendChild(chip);
+      }
+    }
+function showTokens(tokens) {
+      tokenTable.innerHTML = '';
+      (tokens || []).forEach(t => {
+        const tr = document.createElement('tr');
+        tr.style.transition = 'background 0.3s';
+        tr.onmouseover = () => tr.style.background = 'linear-gradient(90deg,#ffecd2 0%,#fcb69f 100%)';
+        tr.onmouseout = () => tr.style.background = '';
+        tr.innerHTML = `
+          <td class="py-1 pr-4 font-bold">${t.type}</td>
+          <td class="py-1 pr-4 font-mono">${t.value}</td>
+          <td class="py-1 pr-4">${t.line ?? ''}</td>
+          <td class="py-1 pr-4">${t.column ?? ''}</td>
+        `;
+        tokenTable.appendChild(tr);
+      });
+    }
+    function showSvg(svg) {
+      svgWrap.innerHTML = svg ? svg : '<div class="text-gray-500">No tree (syntax error?)</div>';
+      exportBtn.style.display = svg ? 'flex' : 'none';
+      svgWrap.style.animation = 'pulse 0.7s';
+      setTimeout(() => svgWrap.style.animation = '', 700);
+    }
 
 
   </script>
