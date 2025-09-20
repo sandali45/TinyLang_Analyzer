@@ -143,6 +143,12 @@ function showTokens(tokens) {
         tokenTable.appendChild(tr);
       });
     }
+    function showSvg(svg) {
+      svgWrap.innerHTML = svg ? svg : '<div class="text-gray-500">No tree (syntax error?)</div>';
+      exportBtn.style.display = svg ? 'flex' : 'none';
+      svgWrap.style.animation = 'pulse 0.7s';
+      setTimeout(() => svgWrap.style.animation = '', 700);
+    }
 
 
   </script>
