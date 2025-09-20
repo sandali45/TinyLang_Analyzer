@@ -149,6 +149,63 @@ function showTokens(tokens) {
       svgWrap.style.animation = 'pulse 0.7s';
       setTimeout(() => svgWrap.style.animation = '', 700);
     }
+    exportBtn.onclick = () => {
+      const svg = svgWrap.querySelector('svg');
+      if (!svg) return;
+
+      const svgCopy = svg.cloneNode(true);
+      svgCopy.style.backgroundColor = 'white';
+      
+      const svgData = new XMLSerializer().serializeToString(svgCopy);
+      const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+      const svgUrl = URL.createObjectURL(svgBlob);
+      
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        
+        const link = document.createElement('a');
+        link.download = 'parse-tree.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        URL.revokeObjectURL(svgUrl);
+      };
+      img.src = svgUrl;
+    }
+    analyzeBtn.onclick = async () => {
+      errorsEl.textContent = '';
+      tokenTable.innerHTML = '';
+      svgWrap.innerHTML = '';
+      loading.style.display = 'block';
+
+      try {
+        const res = await fetch(API + '/analyze', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ source: source.value })
+        });
+        if (!res.ok) {
+          errorsEl.innerHTML = '<div class="text-red-700 font-bold flex items-center gap-2"><span>❌</span> Server error</div>';
+          loading.style.display = 'none';
+          return;
+        }
+        const data = await res.json();
+        showErrors(data.errors);
+        showTokens(data.tokens);
+        showSvg(data.svg);
+      } catch (e) {
+        errorsEl.innerHTML = '<div class="text-red-700 font-bold flex items-center gap-2"><span>❌</span> Network error</div>';
+      }
+      loading.style.display = 'none';
+    };
 
 
   </script>
