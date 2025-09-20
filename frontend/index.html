@@ -180,6 +180,32 @@ function showTokens(tokens) {
       };
       img.src = svgUrl;
     }
+    analyzeBtn.onclick = async () => {
+      errorsEl.textContent = '';
+      tokenTable.innerHTML = '';
+      svgWrap.innerHTML = '';
+      loading.style.display = 'block';
+
+      try {
+        const res = await fetch(API + '/analyze', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ source: source.value })
+        });
+        if (!res.ok) {
+          errorsEl.innerHTML = '<div class="text-red-700 font-bold flex items-center gap-2"><span>❌</span> Server error</div>';
+          loading.style.display = 'none';
+          return;
+        }
+        const data = await res.json();
+        showErrors(data.errors);
+        showTokens(data.tokens);
+        showSvg(data.svg);
+      } catch (e) {
+        errorsEl.innerHTML = '<div class="text-red-700 font-bold flex items-center gap-2"><span>❌</span> Network error</div>';
+      }
+      loading.style.display = 'none';
+    };
 
 
   </script>
