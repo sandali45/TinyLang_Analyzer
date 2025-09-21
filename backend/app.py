@@ -125,3 +125,21 @@ def tree_to_json(t: Tree) -> Dict[str, Any]:
             return node, idx + 1
     root, _ = walk(t, 0)
     return root
+
+def tree_to_svg(t: Tree) -> str:
+    dot = Digraph("ParseTree", format="svg")
+    counter = [0]
+    def add(n):
+        nid = f"n{counter[0]}"
+        counter[0] += 1
+        if isinstance(n, Tree):
+            dot.node(nid, n.data, shape="ellipse")
+            for ch in n.children:
+                cid = add(ch)
+                dot.edge(nid, cid)
+        else:
+            dot.node(nid, f"{n.type}\n{str(n)}", shape="box")
+        return nid
+    add(t)
+    svg_bytes = dot.pipe(format="svg")
+    return svg_bytes.decode("utf-8")
