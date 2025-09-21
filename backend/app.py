@@ -107,6 +107,21 @@ class AnalyzeResponse(BaseModel):
     tree: Dict[str, Any]
     svg: str
 
-# ---------------------------
-# Helpers
 
+def tokens_only(text: str) -> List[Token]:
+    return list(parser.lex(text))
+
+def tree_to_json(t: Tree) -> Dict[str, Any]:
+    def walk(n, idx=0):
+        if isinstance(n, Tree):
+            node = {"id": f"n{idx}", "label": n.data, "children": []}
+            next_idx = idx + 1
+            for c in n.children:
+                child, next_idx = walk(c, next_idx)
+                node["children"].append(child)
+            return node, next_idx
+        else:
+            node = {"id": f"n{idx}", "label": f"{n.type}:{str(n)}", "children": []}
+            return node, idx + 1
+    root, _ = walk(t, 0)
+    return root
