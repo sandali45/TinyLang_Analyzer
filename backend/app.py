@@ -107,6 +107,55 @@ class AnalyzeResponse(BaseModel):
     tree: Dict[str, Any]
     svg: str
 
-# ---------------------------
-# Helpers
 
+def tokens_only(text: str) -> List[Token]:
+    return list(parser.lex(text))
+
+def tree_to_json(t: Tree) -> Dict[str, Any]:
+    def walk(n, idx=0):
+        if isinstance(n, Tree):
+            node = {"id": f"n{idx}", "label": n.data, "children": []}
+            next_idx = idx + 1
+            for c in n.children:
+                child, next_idx = walk(c, next_idx)
+                node["children"].append(child)
+            return node, next_idx
+        else:
+            node = {"id": f"n{idx}", "label": f"{n.type}:{str(n)}", "children": []}
+            return node, idx + 1
+    root, _ = walk(t, 0)
+    return root
+
+def tree_to_svg(t: Tree) -> str:
+    dot = Digraph("ParseTree", format="svg")
+    counter = [0]
+    def add(n):
+        nid = f"n{counter[0]}"
+        counter[0] += 1
+        if isinstance(n, Tree):
+            dot.node(nid, n.data, shape="ellipse")
+            for ch in n.children:
+                cid = add(ch)
+                dot.edge(nid, cid)
+        else:
+            dot.node(nid, f"{n.type}\n{str(n)}", shape="box")
+        return nid
+    add(t)
+    svg_bytes = dot.pipe(format="svg")
+    return svg_bytes.decode("utf-8")
+@app.post("/analyze", response_model=AnalyzeResponse)
+def analyze(req: AnalyzeRequest):
+    text = req.source or ""
+    tokens_out = [TokenOut(type=t.type, value=str(t), line=getattr(t, "line", None), column=getattr(t, "column", None))
+                  for t in tokens_only(text)]
+    errors: List[ErrorOut] = []
+    parsed_tree: Optional[Tree] = None
+    try:
+        parsed_tree = parser.parse(text)
+    except UnexpectedInput as e:
+        errors.append(_format_syntax_error(e, text))
+        return AnalyzeResponse(tokens=tokens_out, errors=errors, tree={}, svg="")
+    
+    tree_json = tree_to_json(parsed_tree)
+    svg = tree_to_svg(parsed_tree)
+    return AnalyzeResponse(tokens=tokens_out, errors=errors, tree=tree_json, svg=svg)
