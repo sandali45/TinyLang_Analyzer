@@ -143,3 +143,26 @@ def tree_to_svg(t: Tree) -> str:
     add(t)
     svg_bytes = dot.pipe(format="svg")
     return svg_bytes.decode("utf-8")
+def _format_syntax_error(e: UnexpectedInput, text: str) -> ErrorOut:
+    expected = None
+    try:
+        if getattr(e, "expected", None):
+            expected = ", ".join(sorted(e.expected))
+    except Exception:
+        expected = None
+    snippet = None
+    try:
+        snippet = e.get_context(text, span=60)
+    except Exception:
+        snippet = None
+    parts = ["Syntax error."]
+    if expected:
+        parts.append(f"Expected one of: {expected}.")
+    if snippet:
+        parts.append("Here:\n" + snippet)
+    return ErrorOut(
+        kind="syntax",
+        message=" ".join(parts) if expected else (parts[0] + ("\n" + snippet if snippet else "")),
+        line=getattr(e, "line", None),
+        column=getattr(e, "column", None),
+    )
