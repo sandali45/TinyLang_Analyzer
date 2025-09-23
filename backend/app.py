@@ -8,13 +8,12 @@ from typing import List, Dict, Any, Optional
 from lark import Lark, Token, Tree, UnexpectedInput
 from graphviz import Digraph
 import os
-from fastapi.staticfiles import StaticFiles
+
 app = FastAPI(title="TinyLang Analyzer")
 
 # ---------------------------
 # Serve frontend folder
 # ---------------------------
-from fastapi.staticfiles import StaticFiles
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")
 app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
@@ -84,6 +83,36 @@ COMMENT: /\/\/[^\n]*/
 parser = Lark(GRAMMAR, parser="lalr", propagate_positions=True)
 
 # ---------------------------
+# Token map (human-readable)
+# ---------------------------
+TOKEN_MAP = {
+    "NAME": "Identifier",
+    "NUMBER": "Number",
+    "INT": "Keyword",
+    "PRINT": "Keyword",
+    "IF": "Keyword",
+    "ELSE": "Keyword",
+    "WHILE": "Keyword",
+    "PLUS": "Operator",
+    "MINUS": "Operator",
+    "STAR": "Operator",
+    "SLASH": "Operator",
+    "PERCENT": "Operator",
+    "EQ": "Operator",
+    "GT": "Operator",
+    "LT": "Operator",
+    "GE": "Operator",
+    "LE": "Operator",
+    "NE": "Operator",
+    "LPAR": "Delimiter",
+    "RPAR": "Delimiter",
+    "LBRACE": "Delimiter",
+    "RBRACE": "Delimiter",
+    "SEMI": "Delimiter",
+    "COMMENT": "Comment",
+}
+
+# ---------------------------
 # Request/Response Models
 # ---------------------------
 class AnalyzeRequest(BaseModel):
@@ -107,7 +136,9 @@ class AnalyzeResponse(BaseModel):
     tree: Dict[str, Any]
     svg: str
 
-
+# ---------------------------
+# Helper functions
+# ---------------------------
 def tokens_only(text: str) -> List[Token]:
     return list(parser.lex(text))
 
@@ -143,19 +174,97 @@ def tree_to_svg(t: Tree) -> str:
     add(t)
     svg_bytes = dot.pipe(format="svg")
     return svg_bytes.decode("utf-8")
+
+def _format_syntax_error(e: UnexpectedInput, text: str) -> Dict:
+    msg = f"Syntax error: unexpected token at line {getattr(e,'line','?')}, column {getattr(e,'column','?')}."
+    lines = text.splitlines()
+    if getattr(e, "line", None) and e.line-1 < len(lines):
+        msg += f" Line content: '{lines[e.line-1].strip()}'"
+    return {
+        "kind": "syntax",
+        "message": msg,
+        "line": getattr(e, "line", None),
+        "column": getattr(e, "column", None)
+    }
+
+# ---------------------------
+# Semantic checker
+# ---------------------------
+def check_semantics(tree: Tree) -> List[Dict]:
+    errors = []
+    declared_vars = set()
+    
+    def visit(node):
+        if isinstance(node, Tree):
+            if node.data == "declaration":
+                var_token = node.children[0]
+                declared_vars.add(var_token.value)
+            elif node.data == "assign":
+                var_token = node.children[0]
+                if var_token.value not in declared_vars:
+                    errors.append({
+                        "kind": "semantic",
+                        "message": f"Variable '{var_token.value}' assigned before declaration.",
+                        "line": var_token.line,
+                        "column": var_token.column
+                    })
+            elif node.data == "var":
+                var_token = node.children[0] if isinstance(node.children[0], Token) else node.children[0]
+                if isinstance(var_token, Token) and var_token.value not in declared_vars:
+                    errors.append({
+                        "kind": "semantic",
+                        "message": f"Variable '{var_token.value}' used before declaration.",
+                        "line": var_token.line,
+                        "column": var_token.column
+                    })
+            for child in node.children:
+                visit(child)
+    
+    visit(tree)
+    return errors
+
+# ---------------------------
+# Analyze endpoint
+# ---------------------------
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest):
     text = req.source or ""
-    tokens_out = [TokenOut(type=t.type, value=str(t), line=getattr(t, "line", None), column=getattr(t, "column", None))
-                  for t in tokens_only(text)]
-    errors: List[ErrorOut] = []
+
+    # Blank input handling
+    if text.strip() == "":
+        return AnalyzeResponse(
+            tokens=[],
+            errors=[{"kind": "input", "message": "Input is blank."}],
+            tree={},
+            svg=""
+        )
+
+    # Tokens
+    tokens_out = [
+        TokenOut(
+            type=TOKEN_MAP.get(t.type, t.type),
+            value=str(t),
+            line=getattr(t, "line", None),
+            column=getattr(t, "column", None)
+        )
+        for t in tokens_only(text)
+    ]
+    
+    errors: List[Dict] = []
     parsed_tree: Optional[Tree] = None
+
+    # Parse
     try:
         parsed_tree = parser.parse(text)
     except UnexpectedInput as e:
         errors.append(_format_syntax_error(e, text))
         return AnalyzeResponse(tokens=tokens_out, errors=errors, tree={}, svg="")
-    
+
+    # Semantic errors
+    semantic_errors = check_semantics(parsed_tree)
+    errors.extend(semantic_errors)
+
     tree_json = tree_to_json(parsed_tree)
     svg = tree_to_svg(parsed_tree)
+    
     return AnalyzeResponse(tokens=tokens_out, errors=errors, tree=tree_json, svg=svg)
