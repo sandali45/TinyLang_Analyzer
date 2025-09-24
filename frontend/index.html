@@ -5,92 +5,164 @@
   <title>TinyLang Web Analyzer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css">
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="/static/style.css">
+
 </head>
-<body class="bg-gray-50">
-  <div class="max-w-6xl mx-auto p-6 space-y-6" style="background: linear-gradient(120deg,#37353E 0%,#2e3189 100%); min-height:100vh;">
-    <header class="flex items-center justify-between">
-      <div class="w-full flex flex-col items-center justify-center py-6">
-        <div class="text-4xl font-extrabold rainbow" style="background: linear-gradient(90deg,#78B9B5 0%,#5c90b4 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-fill-color: transparent; letter-spacing:2px;">Lexical, Syntax & Semantic Analyzer</div>
-        <div class="mt-2 flex gap-2 text-lg">
-          <span class="text-red-400 animate-bounce">🧩</span>
-          <span class="text-yellow-400 animate-pulse">🧠</span>
-          <span class="text-pink-400 animate-bounce">✨</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <span id="apiUrl" class="text-sm text-gray-500">API: http://127.0.0.1:8000</span>
-        <button id="darkToggle" class="dark-toggle">🌙 Dark Mode</button>
-      </div>
+<body>
+  <!-- Animated background particles -->
+  <div class="bg-particles">
+    <div class="particle" style="top: 20%; left: 10%; animation-delay: -2s;"></div>
+    <div class="particle" style="top: 60%; left: 80%; animation-delay: -4s;"></div>
+    <div class="particle" style="top: 40%; left: 60%; animation-delay: -1s;"></div>
+    <div class="particle" style="top: 80%; left: 30%; animation-delay: -3s;"></div>
+    <div class="particle" style="top: 10%; left: 70%; animation-delay: -5s;"></div>
+  </div>
+
+  <div class="container">
+    <!-- Floating emoji decorations -->
+    <div class="emoji-float">🧩</div>
+    <div class="emoji-float">✨</div>
+
+    <header class="header">
+      <button id="darkToggle" class="theme-toggle">
+        <i class="fas fa-moon"></i>
+        <span>Dark Mode</span>
+      </button>
+      
+      <h1 class="title">Lexical, Syntax & Semantic Analyzer</h1>
     </header>
 
-    <section class="grid md:grid-cols-2 gap-6">
-      <div class="bg-white p-4 rounded-2xl shadow">
-  <label class="block text-sm font-semibold mb-2 text-blue-600 flex items-center gap-2"><span>📝</span> Source Code</label>
-        <textarea id="source" class="w-full h-64 p-3 border rounded-xl font-mono text-sm"
-          placeholder="Type your source code here..."
-          style="background: linear-gradient(90deg,#ffe0e0 0%,#fff1e0 100%); border:2px solid #ff5858; color:#222;"></textarea>
-        <div class="mt-4 flex items-center gap-3">
-          <button id="analyzeBtn" class="px-4 py-2 bg-black text-white rounded-xl playful-btn">Analyze</button>
-          <input id="apiInput" class="border rounded-lg px-3 py-2 text-sm w-64" placeholder="http://127.0.0.1:8000" />
-          <button id="setApi" class="px-3 py-2 border rounded-lg text-sm playful-btn">Set API</button>
+    <div class="main-grid">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-icon source-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h2 class="panel-title">Source Code</h2>
         </div>
-        <p class="text-xs text-gray-500 mt-2">Tip: statements end with <code>;</code>. Supports <code>if/else</code>, <code>while</code>, <code>print()</code>, <code>// comments</code>.</p>
-      </div>
+        <div class="panel-content">
+          <textarea id="source" class="code-editor" placeholder="Type your TinyLang source code here...
 
-      <div class="bg-white p-4 rounded-2xl shadow">
-  <h2 class="font-semibold mb-2 text-red-600 flex items-center gap-2"><span>🚨</span> Errors</h2>
-        <div id="errors" class="space-y-2 text-sm"></div>
-  <div id="loading" style="display:none;" class="mt-2"><div class="spinner"></div></div>
-      </div>
-    </section>
+Example:
+int x = 10;
+if (x > 5) {
+    print(x);
+}
+"></textarea>
+          
+          <div class="controls">
+            <button id="analyzeBtn" class="btn btn-primary">
+              <i class="fas fa-play"></i>
+              <span>Analyze Code</span>
+            </button>
+            <input id="apiInput" class="input" placeholder="http://127.0.0.1:8000" />
+            <button id="setApi" class="btn btn-secondary">
+              <i class="fas fa-cog"></i>
+              <span>Set API</span>
+            </button>
+          </div>
 
-    <section class="grid md:grid-cols-2 gap-6">
-      <div class="bg-white p-4 rounded-2xl shadow">
-  <h2 class="font-semibold mb-3 text-blue-600 flex items-center gap-2"><span>🔤</span> Tokens</h2>
-        <div class="overflow-auto">
-          <table class="min-w-full text-sm">
-            <thead>
-              <tr class="text-left border-b">
-                <th class="py-2 pr-4">Type</th>
-                <th class="py-2 pr-4">Value</th>
-                <th class="py-2 pr-4">Line</th>
-                <th class="py-2 pr-4">Col</th>
-              </tr>
-            </thead>
-            <tbody id="tokenTable"></tbody>
-          </table>
+          <div class="tip">
+            <i class="fas fa-lightbulb" style="color: #43e97b; margin-right: 0.75rem;"></i>
+            <strong>Pro Tip:</strong> Statements end with <code>;</code>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white p-4 rounded-2xl shadow">
-  <h2 class="font-semibold mb-3 text-purple-600 flex items-center gap-2"><span>🌳</span> Parse Tree</h2>
-        <div id="svgWrap" class="border rounded-xl p-2 overflow-auto bg-gray-50" style="min-height: 200px;"></div>
-       <button id="exportBtn"
-    class="mt-4 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-400 
-           text-white font-semibold rounded-2xl shadow-xl hover:scale-105 
-           hover:shadow-2xl transition transform duration-300 flex items-center gap-2">
-    <span></span>
-    Export as PNG
-</button>
-
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-icon error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h2 class="panel-title">Error</h2>
+        </div>
+        <div class="panel-content">
+          <div id="errors">
+            <div class="message message-success">
+              <i class="fas fa-check-circle"></i>
+              <div>
+                <strong>Ready to analyze!</strong>
+                <div style="font-size: 0.9rem; opacity: 0.8;">Enter your code and click analyze to get started</div>
+              </div>
+            </div>
+          </div>
+          <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Analyzing your code with advanced algorithms...</p>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
 
-    <footer class="text-xs text-gray-500 text-center">
-      <div class="flex items-center justify-center gap-2">
-        <span class="text-red-400">❤️</span>
-        <span class="text-orange-300">🧡</span>
-        <span class="font-bold">Built by Sandalee and Oneli</span>
+    <div class="results-grid">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-icon tokens-icon">
+            <i class="fas fa-tags"></i>
+          </div>
+          <h2 class="panel-title">Lexical Tokens</h2>
+        </div>
+        <div class="panel-content">
+          <div style="overflow-x: auto;">
+            <table class="tokens-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Value</th>
+                  <th>Line</th>
+                  <th>Column</th>
+                </tr>
+              </thead>
+              <tbody id="tokenTable">
+                <tr>
+                  <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                    <i class="fas fa-code" style="font-size: 2rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+                    Lexical tokens will appear here after analysis
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
+
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-icon tree-icon">
+            <i class="fas fa-sitemap"></i>
+          </div>
+          <h2 class="panel-title">Parse Tree</h2>
+        </div>
+        <div class="panel-content">
+          <div id="svgWrap" class="svg-container">
+            <div class="svg-placeholder">
+              <i class="fas fa-tree"></i>
+              <div>
+                <strong>Parse tree visualization</strong>
+                <div style="font-size: 0.9rem; margin-top: 0.5rem;">Syntax tree structure will appear here after analysis</div>
+              </div>
+            </div>
+          </div>
+          <button id="exportBtn" class="export-btn" style="display: none;">
+            <i class="fas fa-download"></i>
+            <span>Export as PNG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      Built 
+      <span class="footer-hearts">
+        <span>🧡</span>
+      </span>
+      by <strong style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sandali and Oneli</strong>
     </footer>
   </div>
 
-
   <script>
-    const apiLabel = document.getElementById('apiUrl');
     const apiInput = document.getElementById('apiInput');
     const setApiBtn = document.getElementById('setApi');
     const source = document.getElementById('source');
@@ -101,63 +173,113 @@
     const loading = document.getElementById('loading');
     const exportBtn = document.getElementById('exportBtn');
     const darkToggle = document.getElementById('darkToggle');
+    const apiUrl = document.getElementById('apiUrl');
 
     let API = 'http://127.0.0.1:8000';
     apiInput.value = API;
 
     setApiBtn.onclick = () => {
       API = apiInput.value.trim() || API;
-      apiLabel.textContent = 'API: ' + API;
+      apiUrl.textContent = 'API: ' + API;
+      
+      // Visual feedback
+      setApiBtn.innerHTML = '<i class="fas fa-check"></i><span>Connected!</span>';
+      setTimeout(() => {
+        setApiBtn.innerHTML = '<i class="fas fa-cog"></i><span>Set API</span>';
+      }, 2000);
     };
 
     darkToggle.onclick = () => {
-      document.body.classList.toggle('dark-mode');
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      darkToggle.innerHTML = isLight
+        ? '<i class="fas fa-sun"></i><span>Light Mode</span>'
+        : '<i class="fas fa-moon"></i><span>Dark Mode</span>';
     };
 
     function showErrors(list) {
       errorsEl.innerHTML = '';
       if (!list || list.length === 0) {
-        errorsEl.innerHTML = '<div class="text-green-700 font-bold flex items-center gap-2"><span>✅</span> No errors! 🎉</div>';
+        errorsEl.innerHTML = `
+          <div class="message message-success">
+            <i class="fas fa-check-circle"></i>
+            <div>
+              <strong>Analysis completed successfully!</strong>
+              <div style="font-size: 0.9rem; opacity: 0.8;">No syntax or semantic errors found 🎉</div>
+            </div>
+          </div>
+        `;
         return;
       }
+      
       for (const e of list) {
-        const chip = document.createElement('div');
-        chip.className = 'px-3 py-2 border rounded-lg font-bold flex items-center gap-2';
-        chip.style.background = e.kind === 'syntax' ? 'linear-gradient(90deg,#fcb69f 0%,#ffecd2 100%)' : 'linear-gradient(90deg,#a1c4fd 0%,#c2e9fb 100%)';
-        chip.style.color = '#222';
-        chip.innerHTML = `<span>${e.kind === 'syntax' ? '🛑' : '⚠️'}</span> <b>${e.kind.toUpperCase()}</b>: ${e.message}
-                          ${e.line ? `(line ${e.line}, col ${e.column})` : ''}`;
-        errorsEl.appendChild(chip);
+        const message = document.createElement('div');
+        message.className = 'message message-error';
+        message.innerHTML = `
+          <i class="fas fa-${e.kind === 'syntax' ? 'times-circle' : 'exclamation-triangle'}"></i>
+          <div>
+            <strong>${e.kind.toUpperCase()} ERROR</strong>
+            <div style="font-size: 0.9rem; margin-top: 0.25rem;">${e.message}</div>
+            ${e.line ? `<div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.25rem;">Line ${e.line}, Column ${e.column}</div>` : ''}
+          </div>
+        `;
+        errorsEl.appendChild(message);
       }
     }
 
     function showTokens(tokens) {
       tokenTable.innerHTML = '';
-      (tokens || []).forEach(t => {
+      if (!tokens || tokens.length === 0) {
+        tokenTable.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+              <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+              No tokens to display
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tokens.forEach(t => {
         const tr = document.createElement('tr');
-        tr.style.transition = 'background 0.3s';
-        tr.onmouseover = () => tr.style.background = 'linear-gradient(90deg,#ffecd2 0%,#fcb69f 100%)';
-        tr.onmouseout = () => tr.style.background = '';
         tr.innerHTML = `
-          <td class="py-1 pr-4 font-bold">${t.type}</td>
-          <td class="py-1 pr-4 font-mono">${t.value}</td>
-          <td class="py-1 pr-4">${t.line ?? ''}</td>
-          <td class="py-1 pr-4">${t.column ?? ''}</td>
+          <td class="token-type">${t.type}</td>
+          <td><span class="token-value">${t.value}</span></td>
+          <td style="color: var(--text-secondary);">${t.line ?? ''}</td>
+          <td style="color: var(--text-secondary);">${t.column ?? ''}</td>
         `;
         tokenTable.appendChild(tr);
       });
     }
 
     function showSvg(svg) {
-      svgWrap.innerHTML = svg ? svg : '<div class="text-gray-500">No tree (syntax error?)</div>';
-      exportBtn.style.display = svg ? 'flex' : 'none';
-      svgWrap.style.animation = 'pulse 0.7s';
-      setTimeout(() => svgWrap.style.animation = '', 700);
+      if (svg) {
+        svgWrap.innerHTML = svg;
+        exportBtn.style.display = 'flex';
+        // Add entrance animation
+        svgWrap.style.animation = 'slideIn 0.6s ease';
+      } else {
+        svgWrap.innerHTML = `
+          <div class="svg-placeholder">
+            <i class="fas fa-exclamation-triangle" style="color: var(--text-muted); opacity: 0.6;"></i>
+            <div>
+              <strong>Parse tree unavailable</strong>
+              <div style="font-size: 0.9rem; margin-top: 0.5rem;">Unable to generate tree due to syntax errors</div>
+            </div>
+          </div>
+        `;
+        exportBtn.style.display = 'none';
+      }
     }
 
     exportBtn.onclick = () => {
       const svg = svgWrap.querySelector('svg');
       if (!svg) return;
+
+      const originalHTML = exportBtn.innerHTML;
+      exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Exporting...</span>';
+      exportBtn.disabled = true;
 
       const svgCopy = svg.cloneNode(true);
       svgCopy.style.backgroundColor = 'white';
@@ -183,15 +305,35 @@
         link.click();
         
         URL.revokeObjectURL(svgUrl);
+        
+        exportBtn.innerHTML = '<i class="fas fa-check"></i><span>Exported!</span>';
+        setTimeout(() => {
+          exportBtn.innerHTML = originalHTML;
+          exportBtn.disabled = false;
+        }, 2500);
       };
       img.src = svgUrl;
-    }
+    };
 
     analyzeBtn.onclick = async () => {
-      errorsEl.textContent = '';
+      if (!source.value.trim()) {
+        showErrors([{
+          kind: 'input',
+          message: 'Please enter some code to analyze'
+        }]);
+        return;
+      }
+
+      // Reset UI and show loading
+      errorsEl.innerHTML = '';
       tokenTable.innerHTML = '';
       svgWrap.innerHTML = '';
-      loading.style.display = 'block';
+      loading.classList.add('show');
+      
+      // Update button state
+      const originalHTML = analyzeBtn.innerHTML;
+      analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Analyzing...</span>';
+      analyzeBtn.disabled = true;
 
       try {
         const res = await fetch(API + '/analyze', {
@@ -199,22 +341,41 @@
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ source: source.value })
         });
+        
         if (!res.ok) {
-          errorsEl.innerHTML = '<div class="text-red-700 font-bold flex items-center gap-2"><span>❌</span> Server error</div>';
-          loading.style.display = 'none';
-          return;
+          throw new Error(`Server responded with status ${res.status}`);
         }
+        
         const data = await res.json();
         showErrors(data.errors);
         showTokens(data.tokens);
         showSvg(data.svg);
+        
       } catch (e) {
-        errorsEl.innerHTML = '<div class="text-red-700 font-bold flex items-center gap-2"><span>❌</span> Network error</div>';
+        showErrors([{
+          kind: 'network',
+          message: `Failed to connect to analysis server: ${e.message}`
+        }]);
+      } finally {
+        loading.classList.remove('show');
+        analyzeBtn.innerHTML = originalHTML;
+        analyzeBtn.disabled = false;
       }
-      loading.style.display = 'none';
     };
+
+    // Add entrance animations for panels
+    document.addEventListener('DOMContentLoaded', function() {
+      const panels = document.querySelectorAll('.glass-panel');
+      panels.forEach((panel, index) => {
+        panel.style.opacity = '0';
+        panel.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+          panel.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          panel.style.opacity = '1';
+          panel.style.transform = 'translateY(0)';
+        }, index * 150);
+      });
+    });
   </script>
 </body>
 </html>
-
-
