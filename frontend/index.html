@@ -57,7 +57,8 @@ if (x > 5) {
               <i class="fas fa-play"></i>
               <span>Analyze Code</span>
             </button>
-            <input id="apiInput" class="input" placeholder="http://127.0.0.1:8000" />
+            <input id="apiInput" class="input" placeholder="https://tinylang-analyzer.onrender.com" />
+            <!--<input id="apiInput" class="input" placeholder="http://127.0.0.1:8000" />-->
             <button id="setApi" class="btn btn-secondary">
               <i class="fas fa-cog"></i>
               <span>Set API</span>
@@ -175,11 +176,12 @@ if (x > 5) {
     const darkToggle = document.getElementById('darkToggle');
     const apiUrl = document.getElementById('apiUrl');
 
-    let API = 'http://127.0.0.1:8000';
+    let API = window.location.origin;
+    //let API = 'http://127.0.0.1:8000';
     apiInput.value = API;
 
     setApiBtn.onclick = () => {
-      API = apiInput.value.trim() || API;
+      API = apiInput.value.trim() || window.location.origin;
       apiUrl.textContent = 'API: ' + API;
       
       // Visual feedback
