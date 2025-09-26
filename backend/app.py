@@ -9,7 +9,7 @@ from lark import Lark, Token, Tree, UnexpectedInput
 from graphviz import Digraph
 import os
 port = int(os.environ.get("PORT", 5000))   # render gives port
-uvicorn.run(app, host="0.0.0.0", port=port)
+
 
 app = FastAPI(title="TinyLang Analyzer")
 
