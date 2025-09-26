@@ -8,7 +8,9 @@ from typing import List, Dict, Any, Optional
 from lark import Lark, Token, Tree, UnexpectedInput
 from graphviz import Digraph
 import os
-port = int(os.environ.get("PORT", 5000))   # render gives port
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+frontend_path = os.path.join(current_dir, "..", "frontend")
 
 
 app = FastAPI(title="TinyLang Analyzer")
@@ -229,19 +231,31 @@ def check_semantics(tree: Tree) -> List[Dict]:
 # ---------------------------
 # Analyze endpoint
 # ---------------------------
+# @app.post("/analyze", response_model=AnalyzeResponse)
+# def analyze(req: AnalyzeRequest):
+#     text = req.source or ""
+#
+#     # Blank input handling
+#     if text.strip() == "":
+#         return AnalyzeResponse(
+#             tokens=[],
+#             errors=[{"kind": "input", "message": "Input is blank."}],
+#             tree={},
+#             svg=""
+#   
+
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest):
-    text = req.source or ""
-
-    # Blank input handling
-    if text.strip() == "":
+    try:
+        text = req.source or ""
+        # ... your existing code ...
+    except Exception as e:
         return AnalyzeResponse(
             tokens=[],
-            errors=[{"kind": "input", "message": "Input is blank."}],
+            errors=[{"kind": "server", "message": f"Server error: {str(e)}"}],
             tree={},
             svg=""
         )
-
     # Tokens
     tokens_out = [
         TokenOut(
