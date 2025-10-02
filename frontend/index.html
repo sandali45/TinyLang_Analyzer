@@ -9,9 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
  <link rel="stylesheet" href="/static/style.css">
 
+
 </head>
 <body>
-  <!-- Animated background particles -->
+ 
   <div class="bg-particles">
     <div class="particle" style="top: 20%; left: 10%; animation-delay: -2s;"></div>
     <div class="particle" style="top: 60%; left: 80%; animation-delay: -4s;"></div>
@@ -21,7 +22,7 @@
   </div>
 
   <div class="container">
-    <!-- Floating emoji decorations -->
+  
     <div class="emoji-float">🧩</div>
     <div class="emoji-float">✨</div>
 
@@ -57,8 +58,8 @@ if (x > 5) {
               <i class="fas fa-play"></i>
               <span>Analyze Code</span>
             </button>
-            <input id="apiInput" class="input" placeholder="https://tinylang-analyzer.onrender.com" />
-            <!--<input id="apiInput" class="input" placeholder="http://127.0.0.1:8000" />-->
+
+            <input id="apiInput" class="input" placeholder="http://127.0.0.1:8000" />
             <button id="setApi" class="btn btn-secondary">
               <i class="fas fa-cog"></i>
               <span>Set API</span>
@@ -162,7 +163,7 @@ if (x > 5) {
       by <strong style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sandali and Oneli</strong>
     </footer>
   </div>
-
+<!------------------------------------------------------------------------------------------------>  
   <script>
     const apiInput = document.getElementById('apiInput');
     const setApiBtn = document.getElementById('setApi');
@@ -326,13 +327,11 @@ if (x > 5) {
         return;
       }
 
-      // Reset UI and show loading
       errorsEl.innerHTML = '';
       tokenTable.innerHTML = '';
       svgWrap.innerHTML = '';
       loading.classList.add('show');
       
-      // Update button state
       const originalHTML = analyzeBtn.innerHTML;
       analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Analyzing...</span>';
       analyzeBtn.disabled = true;
@@ -365,7 +364,7 @@ if (x > 5) {
       }
     };
 
-    // Add entrance animations for panels
+  
     document.addEventListener('DOMContentLoaded', function() {
       const panels = document.querySelectorAll('.glass-panel');
       panels.forEach((panel, index) => {

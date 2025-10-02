@@ -14,10 +14,6 @@ frontend_path = os.path.join(current_dir, "..", "frontend")
 
 
 app = FastAPI(title="TinyLang Analyzer")
-
-# ---------------------------
-# Serve frontend folder
-# ---------------------------
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")
 app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
@@ -26,21 +22,15 @@ def root():
     index_file = os.path.join(frontend_path, "index.html")
     return FileResponse(index_file)
 
-# ---------------------------
-# Enable CORS
-# ---------------------------
 app.add_middleware(
     CORSMiddleware,
-    #allow_origins=["*"],  
-    allow_origins=["https://tinylang-analyzer.onrender.com"],
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ---------------------------
-# Grammar (TinyLang)
-# ---------------------------
+
 GRAMMAR = r"""
 start: stmt*
 
@@ -87,9 +77,7 @@ COMMENT: /\/\/[^\n]*/
 
 parser = Lark(GRAMMAR, parser="lalr", propagate_positions=True)
 
-# ---------------------------
-# Token map (human-readable)
-# ---------------------------
+
 TOKEN_MAP = {
     "NAME": "Identifier",
     "NUMBER": "Number",
@@ -117,9 +105,6 @@ TOKEN_MAP = {
     "COMMENT": "Comment",
 }
 
-# ---------------------------
-# Request/Response Models
-# ---------------------------
 class AnalyzeRequest(BaseModel):
     source: str
 
@@ -141,9 +126,7 @@ class AnalyzeResponse(BaseModel):
     tree: Dict[str, Any]
     svg: str
 
-# ---------------------------
-# Helper functions
-# ---------------------------
+
 def tokens_only(text: str) -> List[Token]:
     return list(parser.lex(text))
 
@@ -192,9 +175,7 @@ def _format_syntax_error(e: UnexpectedInput, text: str) -> Dict:
         "column": getattr(e, "column", None)
     }
 
-# ---------------------------
-# Semantic checker
-# ---------------------------
+
 def check_semantics(tree: Tree) -> List[Dict]:
     errors = []
     declared_vars = set()
@@ -228,21 +209,7 @@ def check_semantics(tree: Tree) -> List[Dict]:
     visit(tree)
     return errors
 
-# ---------------------------
-# Analyze endpoint
-# ---------------------------
-# @app.post("/analyze", response_model=AnalyzeResponse)
-# def analyze(req: AnalyzeRequest):
-#     text = req.source or ""
-#
-#     # Blank input handling
-#     if text.strip() == "":
-#         return AnalyzeResponse(
-#             tokens=[],
-#             errors=[{"kind": "input", "message": "Input is blank."}],
-#             tree={},
-#             svg=""
-#   
+ 
 
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest):
@@ -252,11 +219,11 @@ def analyze(req: AnalyzeRequest):
     except Exception as e:
         return AnalyzeResponse(
             tokens=[],
-            errors=[{"kind": "server", "message": f"Server error: {str(e)}"}],
+            errors=[{"kind": "input", "message": "Input is blank."}],
             tree={},
             svg=""
         )
-    # Tokens
+
     tokens_out = [
         TokenOut(
             type=TOKEN_MAP.get(t.type, t.type),
@@ -270,14 +237,14 @@ def analyze(req: AnalyzeRequest):
     errors: List[Dict] = []
     parsed_tree: Optional[Tree] = None
 
-    # Parse
+  
     try:
         parsed_tree = parser.parse(text)
     except UnexpectedInput as e:
         errors.append(_format_syntax_error(e, text))
         return AnalyzeResponse(tokens=tokens_out, errors=errors, tree={}, svg="")
 
-    # Semantic errors
+
     semantic_errors = check_semantics(parsed_tree)
     errors.extend(semantic_errors)
 
